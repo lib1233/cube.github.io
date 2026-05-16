@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Успіх у кубі: працювати, вчитись, досягати</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    width:100%;
+    overflow:hidden;
+    height:100vh;
+    background-image:url('Background.jpg');
+    background-size:cover;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#dff7ff;
+}
+
+
+
+.scene{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    perspective:2200px;
+    position:relative;
+}
+
+.row{
+    display:flex;
+    gap:70px;
+    transform-style:preserve-3d;
+}
+
+
+
+.cube-wrap{
+    width:170px;
+    height:170px;
+    position:relative;
+    cursor:pointer;
+    transform-style:preserve-3d;
+    transition:
+        transform 1.2s cubic-bezier(.2,.8,.2,1),
+        filter .8s;
+}
+
+.cube-wrap:hover{
+    filter:drop-shadow(0 0 18px rgba(90,220,255,.9));
+}
+
+.cube{
+    width:100%;
+    height:100%;
+    position:absolute;
+    transform-style:preserve-3d;
+    animation:rotateCube 18s linear infinite;
+}
+
+
+
+.cube-wrap.active{
+    position:absolute;
+
+    transform:
+        translateX(120px)
+        translateY(-32px)
+        translateZ(1100px)
+        scale(1.25);
+
+    z-index:1000;
+
+    filter:
+        drop-shadow(0 0 35px rgba(0,255,255,.95))
+        drop-shadow(0 0 90px rgba(0,180,255,.45));
+
+    transition:
+        transform 1.35s cubic-bezier(.2,.8,.2,1),
+        filter .8s;
+}
+
+
+
+.face{
+    position:absolute;
+    width:170px;
+    height:170px;
+
+    background:rgba(255,255,255,0.015);
+
+    border:1px solid rgba(120,240,255,.22);
+
+    backdrop-filter:none;
+
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,.04),
+        0 0 18px rgba(0,220,255,.12);
+
+    overflow:hidden;
+}
+
+.face::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.18) 0%,
+            rgba(255,255,255,0) 22%,
+            rgba(255,255,255,0) 78%,
+            rgba(255,255,255,.08) 100%
+        );
+
+    pointer-events:none;
+}
+
+
+
+.front  { transform:translateZ(85px); }
+.back   { transform:rotateY(180deg) translateZ(85px); }
+.right  { transform:rotateY(90deg) translateZ(85px); }
+.left   { transform:rotateY(-90deg) translateZ(85px); }
+.top    { transform:rotateX(90deg) translateZ(85px); }
+.bottom { transform:rotateX(-90deg) translateZ(85px); }
+
+
+.book{
+    position:absolute;
+    width:100px;
+    height:140px;
+    left:48px;
+    top:30px;
+
+    transform-style:preserve-3d;
+    animation:bookFloat 5s ease-in-out infinite;
+}
+
+.book-back,
+.book-cover,
+.book-side,
+.pages{
+    position:absolute;
+    background-size:cover;
+    background-position:center;
+}
+
+.book-cover,
+.book-back{
+    width:98px;
+    height:140px;
+    overflow:hidden;
+    backface-visibility:hidden;
+}
+
+.book-cover{
+    transform:translateZ(8px);
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,.55);
+}
+
+.book-back{
+    transform:
+        rotateY(180deg)
+        translateZ(8px);
+}
+
+.book-side{
+    width:16px;
+    height:140px;
+
+    transform:
+        rotateY(90deg)
+        translateZ(-8px);
+}
+
+.pages{
+    position:absolute;
+
+    width:16px;
+    height:140px;
+
+    left:80px;
+
+    background:
+        repeating-linear-gradient(
+            to right,
+            #ffffff 0px,
+            #e9e9e9 2px,
+            #ffffff 4px
+        );
+
+    transform:
+        rotateY(90deg)
+        translateZ(10px);
+
+    box-shadow:
+        inset 0 0 3px rgba(0,0,0,.15),
+        0 0 4px rgba(255,255,255,.35);
+}
+
+.book-top{
+    position:absolute;
+
+    width:15px;
+    height:97px;
+
+    left:56px;
+
+    background:
+        repeating-linear-gradient(
+            to right,
+            #ffffff 0px,
+            #e9e9e9 2px,
+            #ffffff 4px
+        );
+
+    transform:
+        rotateX(90deg)
+        rotateZ(90deg)
+        translateX(0px)
+        translateZ(48px)
+        translateY(14px);
+
+    box-shadow:
+        inset 0 0 3px rgba(0,0,0,.15),
+        0 0 4px rgba(255,255,255,.35);
+}
+
+
+.book1 .book-cover{
+       background-image:url('Realization-1.jpg');
+}
+.book1 .book-back{
+    background-image:url('Realization-2.jpg');
+}
+.book1 .book-side
+{background-image:url('Realization-3.jpg');
+}
+
+.book2 .book-cover{
+    background-image:url('Social-1.jpg');
+}
+
+.book2 .book-back{
+    background-image:url('Social-2.jpg');
+}
+.book2 .book-side
+{background-image:url('Social-3.jpg');
+}
+
+.book3 .book-cover{
+       background-image:url('Agro-1.jpg');
+}
+.book3 .book-back{
+    background-image:url('Agro-2.jpg');
+}
+.book3 .book-side
+{background-image:url('Agro-2.jpg');
+}
+
+.book4 .book-cover{
+    background-image:url('Psychological-1.jpg');
+}
+.book4 .book-back{
+    background-image:url('Psychological-2.jpg');
+}
+.book4 .book-side{
+background-image:url('Psychological-3.jpg');
+}
+
+.book5 .book-cover{
+    background-image:url('Competence-1.jpg');
+}
+
+.book5 .book-back{
+    background-image:url('Competence-2.jpg');
+}
+.book5 .book-side
+{background-image:url('Competence-2.jpg');
+}
+
+
+
+.book-cover::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(255,255,255,.4),
+            transparent
+        );
+
+    animation:scan 4s linear infinite;
+}
+
+
+
+.title{
+    position:relative;
+    margin-top:20px;
+    font-size:25px;
+    font-style:italic;
+    text-align:center;
+    color:#d7f6ff;
+    text-shadow:0 0 15px cyan;
+    letter-spacing:2px;
+}
+
+.title-2{
+    position:relative;
+    margin-top:10px;
+    font-size:54px;
+    text-align:center;
+    color:#6ef7ff;
+    text-shadow:0 0 15px cyan;
+    letter-spacing:2px;
+}
+
+.title-3{
+    position:absolute;
+    top:650px;
+    right:160px;
+    font-size:25px;
+    color:#d7f6ff;
+    text-shadow:0 0 15px cyan;
+}
+
+
+.info-panel{
+    position:fixed;
+    overflow:auto;
+
+    right:-800px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:700px;
+    height:620px;
+
+    padding:35px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10,25,50,.94),
+            rgba(5,10,20,.96)
+        );
+
+    border:1px solid rgba(0,255,255,.35);
+
+    box-shadow:
+        0 0 40px rgba(0,255,255,.22),
+        inset 0 0 20px rgba(0,255,255,.08);
+
+    backdrop-filter:blur(10px);
+
+    transition:right .8s cubic-bezier(.2,.9,.2,1);
+
+    z-index:999;
+}
+
+.info-panel.show{
+    right:10px;
+}
+
+.info-panel::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,255,.05),
+            rgba(0,255,255,.05) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    pointer-events:none;
+}
+
+.info-title{
+    font-size:18.5px;
+    margin-bottom:25px;
+    color:#6ef7ff;
+    text-shadow:0 0 15px cyan;
+    text-align:justify;
+    text-indent:17px;
+    letter-spacing:2px;
+    margin:1em;
+}
+
+.info-text{
+    line-height:1.8;
+    font-size:16px;
+    color:#d7f6ff;
+    text-align:justify;
+    text-indent:17px;
+    margin:1em;
+}
+
+
+.read-link{
+    margin-top:40px;
+    display:none;
+
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    gap:14px;
+
+    text-decoration:none;
+    width:100%;
+}
+
+.read-link.show{
+    display:flex;
+}
+
+.neon-circle{
+    width:64px;
+    height:64px;
+
+    border-radius:50%;
+    border:2px solid #00f7ff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+        0 0 14px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,.5);
+
+    transition:.35s;
+}
+
+.neon-circle:hover{
+    transform:scale(1.08);
+
+    box-shadow:
+        0 0 25px #00f7ff,
+        inset 0 0 18px rgba(0,247,255,.8);
+}
+
+.neon-circle svg{
+    width:28px;
+    fill:#7fffff;
+    filter:drop-shadow(0 0 6px #00ffff);
+}
+
+.read-text{
+    color:#7efcff;
+    font-size:22px;
+    letter-spacing:2px;
+    text-shadow:0 0 10px #00f7ff;
+}
+
+
+
+.hud{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.hud::before,
+.hud::after{
+    content:"";
+    position:absolute;
+    border:1px solid rgba(0,255,255,.08);
+}
+
+.hud::before{
+    inset:40px;
+}
+
+.hud::after{
+    inset:80px;
+}
+
+
+::-webkit-scrollbar{
+    width:12px;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color:#00ffff;
+    border-radius:10px;
+    border:2px solid #000000;
+}
+
+
+
+@keyframes rotateCube{
+    from{
+        transform:rotateX(-18deg) rotateY(0deg);
+    }
+
+    to{
+        transform:rotateX(-18deg) rotateY(360deg);
+    }
+}
+
+@keyframes bookFloat{
+    0%,100%{
+        transform:translateY(0px) rotateY(0deg);
+    }
+
+    50%{
+        transform:translateY(-8px) rotateY(10deg);
+    }
+}
+
+@keyframes scan{
+    0%{
+        transform:translateY(-120%);
+    }
+
+    100%{
+        transform:translateY(120%);
+    }
+}
+
+
+
+@media (max-width:1400px){
+
+    .row{
+        gap:40px;
+        transform:scale(.85);
+    }
+
+    .panel{
+        width:320px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<body>
+  <div class="title">Віртуальна книжкова полиця</div>
+  <div class="title-2">Успіх у кубі: працювати, вчитись, досягати</div>
+<div class="scene">
+
+    <div class="hud"></div>
+
+    <div class="row">
+
+
+<div class="cube-wrap" 
+		data-title="Реалізація сучасних освітніх практик при підготовці кваліфікованих робітників : матеріали регіон. наук.-практ. семінару (16 квіт. 2020 р., м. Горішні Плавні Полтав. обл.) / [за заг. ред. В. С. Кулішова, І. В. Арестової; наук. ред. А. Б. Єрмоленко] ;  Нац. акад. пед. наук України, ДЗВО «Університет менеджменту освіти», Білоцерк. ін-т неперерв. проф. освіти, Каф. методики проф. освіти та соц.-гуманіт. дисциплін. – Біла Церква : [БІНПО ДЗВО «УМО» НАПН України], 2020. – 298 с."
+        data-text="У збірнику представлено тези доповідей учасників Регіонального науково-практичного семінару «Реалізація сучасних освітніх практик при підготовці кваліфікованих робітників» (16 квітня 2020 року, м. Горішні Плавні Полтавської обл.). У ході роботи семінару було розглянуто ряд актуальних питань, пов’язаних із сучасною навчально-організаційною та науково-методичною діяльністю педагога професійної школи, перспективними напрямами співпраці закладів професійної (професійно-технічної) освіти з ключовими стейкхолдерами, впровадженням сучасних технологій навчання у професійну підготовку кваліфікованих робітників, розробленням сучасного навчально-методичного супроводу у закладах професійної (професійно-технічної) освіти, особливостями реалізації дуальної форми навчання при підготовці кваліфікованих робітників, ефективністю впровадження новітніх виробничих технологій у професійну підготовку кваліфікованих робітників, особливостями організації та проведення позаурочних навчальних заходів у закладах професійної (професійно-технічної) освіти, тощо. </p> 
+<p>Матеріали збірника стануть у пригоді керівникам, методистам, старшим майстрам, викладачам професійно-теоретичної підготовки та майстрам виробничого навчання закладів професійної (професійно-технічної) освіти. </p>
+<p>За зміст і достовірність матеріалів несуть відповідальність автори тез. </p>
+"
+data-link="https://lib.iitta.gov.ua/id/eprint/723020/1/Реалізація%20сучасних%20освітніх%20практик%20при%20підготовці%20кв.робітників.pdf">
+
+<div class="cube">
+
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+
+<div class="book book1">
+<div class="book-cover"></div>
+<div class="pages"></div>
+<div class="book-top"></div>
+<div class="book-side"></div>
+<div class="book-back"></div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="cube-wrap"
+data-title="Соціально-освітні домінанти професійної підготовки сучасного компетентного фахівця : зб. матеріалів ІІІ Всеукр. студент. наук.-практ. конф. (16 травня 2024 р., м. &nbspБіла &nbspЦерква) &nbsp/ &nbsp[за &nbspзаг. &nbsp&nbspред. &nbspВ. &nbspС. &nbspКулішова, Ю. С. Герасименко, О. Й. Фурса ]; Нац. акад. пед. наук України,  ДЗВО «Університет менеджменту освіти», Білоцерк. ін-т неперерв. проф. освіти, Каф. педагогі-ки, психології та менедж. – Біла Церква: [БІНПО ДЗВО «УМО» НАПН України], 2024. – 374 c."
+data-text="У збірнику представлено тези доповідей учасників ІІІ Всеукраїнської студентської науково-практичної конференції «Соціально-освітні домінанти професійної підготовки сучасного компетентного фахівця». У ході проведення  конференції було обговорено низку актуальних питань, пов’язаних з теоретичними і практичними засадами підготовки сучасного компетентного фахівця: вітчизняний і зарубіжний досвід, особливостями підготовки конкурентоспроможного випускника ЗВО в період війни; технологіями розвитку професійної майстерності психолога у період війни і повоєнного відновлення України; розвитком компетентності молодих фахівців щодо прийняття ефективних управлінських рішень; роллю педагога вищої школи у формуванні національної свідомості особистості в умовах воєнного стану; індивідуальної освітньої траєкторії майбутнього фахівця; підготовкою майбутніх психологів до надання ефективної психологічної допомоги в період війни, тощо. 
+<p>Матеріали видання стануть у пригоді здобувачам освіти, аспірантам, молодим науковцям та всім, хто цікавиться питаннями підготовки сучасного компетентного фахівця. </p>
+ <p>Автори опублікованих матеріалів несуть відповідальність за підбір, точність наведених фактів, цитат, статистичних даних, власних імен та стиль викладу основного матеріалу. </p>
+"
+">
+
+<div class="cube">
+
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+
+<div class="book book2">
+<div class="book-cover"></div>
+<div class="pages"></div>
+<div class="book-top"></div>
+<div class="book-side"></div>
+<div class="book-back"></div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cube-wrap" 
+		data-title="Інноваційні технології при підготовці фахівців агропромислового комплексу в умовах повоєнної розбудови України : матеріали усеукр. наук.-практ. конф., м. Біла Церква, 28 верес. 2023 р. / [упорядкув.: М. В. Жук, О. П. Юденкова, А. М. Геревенко] ; Нац. акад. пед. наук України,  ДЗВО «Університет менеджменту освіти», Білоцерк. ін-т неперерв. проф. освіти, Каф. методики проф. освіти та соц.-гуманіт. дисциплін. – Біла Церква : БІНПО, 2023. – 230 с."
+        data-text="У збірнику представлено тези доповідей учасників Всеукраїнської науково-практичної інтернет-конференції «Інноваційні технології при підготовці фахівців агропромислового комплексу в умовах повоєнної розбудови України» (28 вересня 2023 року, м. Біла Церква). У ході роботи конференції було розглянуто ряд актуальних питань стосовно: традиції та інновації в підготовці фахівців агропромислового комплексу; науково-методичний супровід професійної підготовки майбутніх фахівців сфери агропромислового комплексу: виклики, тенденції, повоєнні перспективи; методика формування ключових та професійних компетентностей здобувачів освіти закладів професійної та фахової передвищої освіти; розвиток творчості здобувачів освіти в позааудиторній роботі закладів освіти; інклюзивне навчання фахівців сфери агропромислового комплексу; екологічна освіта в системі підготовки фахівців агропромислового комплексу для задоволення повоєнних потреб особистості, суспільства,економіки в Україні, тощо.
+<p>Матеріали збірника стануть у пригоді керівникам, методистам, старшим майстрам, викладачам професійно-теоретичної підготовки та майстрам виробничого навчання закладів професійної (професійно-технічної) освіти. <p>За зміст і достовірність матеріалів несуть відповідальність автори тез.
+</p>"
+data-link="https://lib.iitta.gov.ua/id/eprint/738173/1/ЗБІРНИК%20ТЕЗ%20АГРАРНИЙ%20З%20ВЧЕНОЮ%20РАДОЮ.pdf">
+
+<div class="cube">
+
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+
+<div class="book book3">
+<div class="book-cover"></div>
+<div class="pages"></div>
+<div class="book-top"></div>
+<div class="book-side"></div>
+<div class="book-back"></div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cube-wrap"
+data-title="Психолого-педагогічні чинники формування професійної компетентності кваліфікованих робітників в умовах воєнного стану: електрон. зб. матеріалів регіон. наук.-практ.  семінару (26 квіт. 2024 р., м. Біла Церква) / [упоряд.: В. С. Кулішов, І. В. Пахомов] ; Нац. акад. пед. наук України,  ДЗВО «Університет менеджменту освіти», Білоцерк. ін-т неперерв. проф. освіти, Каф. педагогіки, психології та менедж. – Біла Церква : [БІНПО ДЗВО «УМО» НАПН України], 2024. –  298 с."
+data-text="У збірнику представлено тези доповідей учасників регіонального науково-практичного семінару «Психолого-педагогічні чинники формування професійної компетентності кваліфікованих робітників в умовах воєнного стану» (26 квітня 2024 р. року, м. Біла Церква). У ході роботи семінару було розглянуто ряд актуальних питань стосовно: психологічного супроводу формування соціально успішної особистості майбутнього кваліфікованого робітника в умовах воєнного стану; педагогічних чинників розвитку фахових компетентностей кваліфікованих робітників в умовах воєнного стану; особливостей організації та проведення виховної роботи в закладах професійної (професійно-технічної) освіти; психологічної підтримки учасників освітнього процесу в умовах воєнного стану; підвищення мотивації здобувачів професійної (професійно-технічної) освіти до навчання в умовах воєнного стану; створення інноваційного освітнього середовища в закладах професійної (професійно-технічної) освіти. 
+<p>Матеріали збірника стануть у пригоді керівникам, методистам, старшим майстрам, викладачам професійно-теоретичної підготовки та майстрам виробничого навчання закладів професійної (професійно-технічної) освіти. За зміст і достовірність матеріалів несуть відповідальність автори тез. </p>
+"
+data-link="https://lib.iitta.gov.ua/id/eprint/741661/1/Збірник_регіональний%20семінар%2026.04.2024.pdf">
+
+
+<div class="cube">
+
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+
+<div class="book book4">
+<div class="book-cover"></div>
+<div class="pages"></div>
+<div class="book-top"></div>
+<div class="book-side"></div>
+<div class="book-back"></div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="cube-wrap"
+data-title="Розвиток науково-методичної компетентності педагогічних працівників ЗП(ПТ)О в умовах воєнного стану та пандемії : матеріали регіон. наук.-практ. семінару 26 трав. 2022 р. / [упоряд. А. Б. Єрмоленко] ; Нац. Акад. пед. наук України, ДЗВО «Університет менеджменту освіти», Білоцерк. ін-т неперерв. проф. освіти; Навч.-метод. центр ПТО у Черкас. обл. – Біла Церква : [БІНПО ДЗВО «УМО» НАПН України], 2022. – 76 с."
+data-text="Збірник укладено на основі матеріалів і тез учасників Регіонального науково-практичного семінару «Розвиток науково-методичної компетентності педагогічних працівників ЗП(ПТ)О в умовах воєнного стану та пандемії», що відбувся 26 травня 2022 року. Співорганізаторами заходу виступили: кафедра методики професійної освіти та соціально-гуманітарних дисциплін Білоцерківського інституту неперервної професійної освіти ДЗВО «УМО» НАПН України та Навчально-методичний центр професійно-технічної освіти у Черкаській області.
+<p>Актуалізовано професійну значимість розвитку науково-методичної компетентності педагогів професійної (професійно-технічної) освіти в умовах воєнного стану та пандемії. Узагальнено наукові доповіді, презентований інноваційний педагогічний досвід і кращі освітні практики. Враховувати ключові тенденції розвитку світового та вітчизняного ринків освіти, використання здобутків й досвіду інституцій системи безперервної освіти як майданчиків для інновацій; розглянуто сучасну навчально-організаційна та науково-методична діяльність педагога ЗП(ПТ)О та шляхи її удосконалення; узагальнено практику реалізації новітніх науково-методичних підходів до організації та проведення сучасного заняття з професійної підготовки; конкретизовано шляхи розвитку науково-методичної компетентності педагогів ЗП(ПТ)О в контексті удосконалення формальної, неформальної та інформальної освіти, важливим вбачається практика формування та розвиток науково-методичної компетентності педагогів ЗП(ПТ)О в системі безперервної освіти в умовах воєнного стану та пандемії.</p>
+"
+data-link="https://binpo.com.ua/wp-content/uploads/2022/09/РОЗВИТОК-НАУКОВО-МЕТОДИЧНОЇ-КОМПЕТЕНТНОСТІ-ПЕДАГОГІЧНИХ-ПРАЦІВНИКІВ-ЗППТО-В-УМОВАХ-ВОЄННОГО-СТАНУ-ТА-ПАНДЕМІЇ.pdf">
+
+<div class="cube">
+
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+
+<div class="book book5">
+<div class="book-cover"></div>
+<div class="pages"></div>
+<div class="book-top"></div>
+<div class="book-side"></div>
+<div class="book-back"></div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+
+<div class="info-panel" id="panel">
+
+<div class="info-title" id="title"></div>
+
+<div class="info-text" id="text"></div>
+
+<a class="read-link" id="readLink" target="_blank">
+
+<div class="neon-circle">
+
+<svg viewBox="0 0 24 24">
+<path d="M4 3h13a3 3 0 0 1 3 3v13a2 2 0 0 1-2 2H6a2 2 0 0 0-2-2V3zm2 2v11.5c.46-.31 1-.5 1.5-.5H18V6a1 1 0 0 0-1-1H6zm2 2h7v2H8V7zm0 4h7v2H8v-2z"/>
+</svg>
+
+</div>
+
+<div class="read-text">Читати онлайн</div>
+
+</a>
+
+</div>
+
+<div class="title-3">Наукова бібліотека БІНПО</div>
+
+</div>
+
+<script>
+const cubes = document.querySelectorAll('.cube-wrap');
+
+const panel = document.getElementById('panel');
+const title = document.getElementById('title');
+const text = document.getElementById('text');
+
+const readLink = document.getElementById('readLink');
+
+let activeCube = null;
+
+cubes.forEach(cube => {
+
+    cube.addEventListener('click', () => {
+
+   
+
+        if(activeCube === cube){
+
+            cube.classList.remove('active');
+            panel.classList.remove('show');
+            readLink.classList.remove('show');
+
+            activeCube = null;
+            return;
+        }
+
+
+
+        cubes.forEach(c => c.classList.remove('active'));
+
+
+
+        cube.classList.add('active');
+
+        title.innerHTML = cube.dataset.title;
+        text.innerHTML = cube.dataset.text;
+
+        panel.classList.add('show');
+
+
+        const link = cube.dataset.link;
+
+        if(link){
+
+            readLink.href = link;
+            readLink.classList.add('show');
+
+        } else {
+
+            readLink.classList.remove('show');
+            readLink.removeAttribute('href');
+        }
+
+        activeCube = cube;
+    });
+
+});
+</script>
+
+</body>
+</html>
